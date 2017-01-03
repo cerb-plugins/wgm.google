@@ -1,0 +1,1 @@
+<a href="{devblocks_url}c=config&a=google{/devblocks_url}">Google</a>
