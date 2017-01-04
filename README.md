@@ -11,7 +11,7 @@ Installation
 ------------
 * Make a new [Google application](https://console.developers.google.com/apis/).
 * Download the plugin **Setup->Plugins->Plugin Library**.
-* Enable the plugin and configure your Google app credentials in **Setup->Services**.
+* Enable the plugin and configure your Google app credentials in **Setup->Services->Google**.
 
 Credits
 -------

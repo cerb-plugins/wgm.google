@@ -20,15 +20,11 @@
 		<require plugin_id="cerberusweb.core" version="7.3.0" />
 	</dependencies>
 
-	<!-- Exported Classes -->
+	<!-- Patches -->
 	
-	<!--
-	<class_loader>
-		<file path="api/App.php">
-			<class name="WgmLinkedIn_API" />
-		</file>
-	</class_loader>
-	-->
+	<patches>
+		<patch version="7.3.0" revision="1" file="patches/7.3.0.php" />
+	</patches>
 
 	<!-- Extensions -->
  

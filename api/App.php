@@ -21,11 +21,8 @@ class WgmGoogle_SetupSection extends Extension_PageSection {
 		
 		$visit->set(ChConfigurationPage::ID, 'google');
 		
-		$params = array(
-			'consumer_key' => DevblocksPlatform::getPluginSetting('wgm.google','consumer_key',''),
-			'consumer_secret' => DevblocksPlatform::getPluginSetting('wgm.google','consumer_secret',''),
-		);
-		$tpl->assign('params', $params);
+		$credentials = DevblocksPlatform::getPluginSetting('wgm.google', 'credentials', false, true, true);
+		$tpl->assign('credentials', $credentials);
 
 		$tpl->display('devblocks:wgm.google::setup/index.tpl');
 	}
@@ -38,8 +35,12 @@ class WgmGoogle_SetupSection extends Extension_PageSection {
 			if(empty($consumer_key) || empty($consumer_secret))
 				throw new Exception("Both the 'Client ID' and 'Client Secret' are required.");
 			
-			DevblocksPlatform::setPluginSetting('wgm.google', 'consumer_key', $consumer_key);
-			DevblocksPlatform::setPluginSetting('wgm.google', 'consumer_secret', $consumer_secret);
+			$credentials = [
+				'consumer_key' => $consumer_key,
+				'consumer_secret' => $consumer_secret,
+			];
+			
+			DevblocksPlatform::setPluginSetting('wgm.google', 'credentials', $credentials, true, true);
 			
 			echo json_encode(array('status'=>true, 'message'=>'Saved!'));
 			return;
@@ -56,8 +57,11 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 	const ID = 'wgm.google.service.provider';
 
 	private function _getAppKeys() {
-		$consumer_key = DevblocksPlatform::getPluginSetting('wgm.google','consumer_key','');
-		$consumer_secret = DevblocksPlatform::getPluginSetting('wgm.google','consumer_secret','');
+		if(false == ($credentials = DevblocksPlatform::getPluginSetting('wgm.google', 'credentials', false, true, true)))
+			return;
+		
+		@$consumer_key = $credentials['consumer_key'];
+		@$consumer_secret = $credentials['consumer_secret'];
 		
 		if(empty($consumer_key) || empty($consumer_secret))
 			return false;
