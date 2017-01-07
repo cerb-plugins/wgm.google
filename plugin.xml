@@ -34,7 +34,7 @@
 
 		<extension point="cerberusweb.ui.page.menu.item">
 			<id>wgm.google.setup.menu</id>
-			<name>Google Plugins Menu Item</name>
+			<name>Google</name>
 			<class>
 				<file>api/App.php</file>
 				<name>WgmGoogle_SetupMenuItem</name>
