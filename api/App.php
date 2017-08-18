@@ -4,7 +4,7 @@ class WgmGoogle_SetupMenuItem extends Extension_PageMenuItem {
 	const POINT = 'wgm.google.setup.menu';
 	
 	function render() {
-		$tpl = DevblocksPlatform::getTemplateService();
+		$tpl = DevblocksPlatform::services()->template();
 		$tpl->assign('extension', $this);
 		$tpl->display('devblocks:wgm.google::setup/menu_item.tpl');
 	}
@@ -16,7 +16,7 @@ class WgmGoogle_SetupSection extends Extension_PageSection {
 	const ID = 'wgm.google.setup.page';
 	
 	function render() {
-		$tpl = DevblocksPlatform::getTemplateService();
+		$tpl = DevblocksPlatform::services()->template();
 		$visit = CerberusApplication::getVisit();
 		
 		$visit->set(ChConfigurationPage::ID, 'google');
@@ -57,7 +57,7 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 	const ID = 'wgm.google.service.provider';
 	
 	function renderConfigForm(Model_ConnectedAccount $account) {
-		$tpl = DevblocksPlatform::getTemplateService();
+		$tpl = DevblocksPlatform::services()->template();
 		$active_worker = CerberusApplication::getActiveWorker();
 		
 		$tpl->assign('account', $account);
@@ -72,7 +72,7 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 		@$edit_params = DevblocksPlatform::importGPC($_POST['params'], 'array', array());
 		
 		$active_worker = CerberusApplication::getActiveWorker();
-		$encrypt = DevblocksPlatform::getEncryptionService();
+		$encrypt = DevblocksPlatform::services()->encryption();
 		
 		// Decrypt OAuth params
 		if(isset($edit_params['params_json'])) {
@@ -112,13 +112,13 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 		// Store the $form_id in the session
 		$_SESSION['oauth_form_id'] = $form_id;
 		
-		$url_writer = DevblocksPlatform::getUrlService();
+		$url_writer = DevblocksPlatform::services()->url();
 		
 		// [TODO] Report about missing app keys
 		if(false == ($app_keys = $this->_getAppKeys()))
 			return false;
 		
-		$oauth = DevblocksPlatform::getOAuthService($app_keys['key'], $app_keys['secret']);
+		$oauth = DevblocksPlatform::services()->oauth($app_keys['key'], $app_keys['secret']);
 		
 		// Persist the view_id in the session
 		$_SESSION['oauth_state'] = CerberusApplication::generatePassword(24);
@@ -151,8 +151,8 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 		unset($_SESSION['oauth_form_id']);
 		
 		$active_worker = CerberusApplication::getActiveWorker();
-		$url_writer = DevblocksPlatform::getUrlService();
-		$encrypt = DevblocksPlatform::getEncryptionService();
+		$url_writer = DevblocksPlatform::services()->url();
+		$encrypt = DevblocksPlatform::services()->encryption();
 		
 		$redirect_url = $url_writer->write(sprintf('c=oauth&a=callback&ext=%s', ServiceProvider_Google::ID), true);
 		
@@ -164,7 +164,7 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 		
 		$access_token_url = 'https://www.googleapis.com/oauth2/v4/token';
 		
-		$oauth = DevblocksPlatform::getOAuthService($app_keys['key'], $app_keys['secret']);
+		$oauth = DevblocksPlatform::services()->oauth($app_keys['key'], $app_keys['secret']);
 		$oauth->setTokens($code);
 		
 		$params = $oauth->getAccessToken($access_token_url, array(
@@ -192,7 +192,7 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 		$params['label'] = $json['displayName'];
 		
 		// Output
-		$tpl = DevblocksPlatform::getTemplateService();
+		$tpl = DevblocksPlatform::services()->template();
 		$tpl->assign('form_id', $form_id);
 		$tpl->assign('label', $params['label']);
 		$tpl->assign('params_json', $encrypt->encrypt(json_encode($params)));
@@ -210,7 +210,7 @@ class ServiceProvider_Google extends Extension_ServiceProvider implements IServi
 		if(false == ($app_keys = $this->_getAppKeys()))
 			return false;
 		
-		$oauth = DevblocksPlatform::getOAuthService($app_keys['key'], $app_keys['secret']);
+		$oauth = DevblocksPlatform::services()->oauth($app_keys['key'], $app_keys['secret']);
 		$oauth->setTokens($credentials['access_token']);
 		$result = $oauth->authenticateHttpRequest($ch, $verb, $url, $body, $headers);
 		return $result;
